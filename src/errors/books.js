@@ -1,3 +1,4 @@
+// Cannot find book in Database
 function BookNotFoundError(message) {
   const error = new Error(message);
   error.response = {code: 1, message: message};
@@ -5,7 +6,5 @@ function BookNotFoundError(message) {
 
   return error;
 }
-
 BookNotFoundError.prototype = Object.create(Error.prototype);
-
 module.exports.BookNotFoundError = BookNotFoundError;
