@@ -24,6 +24,25 @@ services:
     volumes:
       - mongodb-test:/data/db
       - ./src/seeds/test.js:/docker-entrypoint-initdb.d/test.js:ro
+    
+  sonar:
+    image: sonarqube
+    ports:
+      - 9000:9000
+
+  scanner:
+    image: sonarsource/sonar-scanner-cli
+    environment:
+      SONAR_HOST_URL: http://sonar:9000
+      SONAR_PROJECT_BASE_DIR: /usr/src
+    volumes:
+      - ./:/usr/src
+      - ./sonar-scanner.properties:/opt/sonar-scanner/conf/sonar-scanner.properties
+    depends_on:
+      - sonar
+    user: "root"
+    command: /usr/src/sonar.sh
+    entrypoint: /bin/sh -c
 
 volumes:
   mongodb-test:
