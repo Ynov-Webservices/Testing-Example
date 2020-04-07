@@ -1,10 +1,11 @@
 const sinon = require('sinon');
 const chai = require('chai');
 const mongoose = require('mongoose');
+const request = require('request-promise');
 const expect = chai.expect;
-const should = require('chai').should();
 
 const booksRepo = require('../repositories/books');
+const coversRepo = require('../repositories/covers');
 
 const filmListMock = require('./mocks/film_list.json');
 
@@ -35,7 +36,39 @@ describe('Book', () => {
     expect(response).to.be.deep.equal(filmListMock[0]);
   });
 
-  it('should throw a BookNotFoundError', (done) => {
-    expect(booksRepo.findBookById('10')).to.be.rejectedWith(Error, 'Cannot find book 10').notify(done);
+  it('should throw a BookNotFoundError', () => {
+    expect(booksRepo.findBookById('10')).to.be.rejectedWith(Error, 'Cannot find book 10');
   });
-})
+});
+
+describe('Cover', () => {
+  afterEach(function() {
+    request.get.restore();
+  });
+
+  it('should return cover url', async () => {
+    sinon.stub(request, 'get').returns(new Promise(resolve => {
+      resolve({docs:[{cover_edition_key: 'TESTIMAGE'}]});
+    }));
+
+    const response = await coversRepo.findCoverUrl('8365315017');
+
+    expect(response).to.be.equal(`http://covers.openlibrary.org/b/olid/TESTIMAGE-L.jpg`);
+  });
+
+  it('should throw a CoverBookNotFoundError', async () => {
+    sinon.stub(request, 'get').returns(new Promise(resolve => {
+      resolve({docs:[]});
+    }));
+
+    expect(coversRepo.findCoverUrl('notabook')).to.be.rejectedWith(Error, 'Cannot find document for book id notabook');
+  });
+
+  it('should throw a CoverNotFoundError', async () => {
+    sinon.stub(request, 'get').returns(new Promise(resolve => {
+      resolve({docs:[{}]});
+    }));
+
+    expect(coversRepo.findCoverUrl('notabook')).to.be.rejectedWith(Error, 'Cannot find cover for book id notabook');
+  });
+});
