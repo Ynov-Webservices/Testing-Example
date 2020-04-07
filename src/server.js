@@ -10,3 +10,5 @@ mongoose.connect('mongodb://mongo:27017/books', {useNewUrlParser: true, useUnifi
 router(app);
 
 app.listen(port, () => console.log(`API Served off port: ${port}`));
+
+module.exports = app;

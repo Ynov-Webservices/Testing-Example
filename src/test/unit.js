@@ -13,6 +13,10 @@ before(() => {
   mongoose.connect('mongodb://mongo:27017/books_test', {useNewUrlParser: true, useUnifiedTopology: true});
 });
 
+after(() => {
+  mongoose.connection.close();
+});
+
 describe('Books list', () => {
   it('should return two books with lean option', async () => {
     const response = await booksRepo.findAllBooks(true);
