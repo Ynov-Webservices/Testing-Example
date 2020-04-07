@@ -1,0 +1,29 @@
+version: "3"
+services:
+  app:
+    build: .
+    volumes:
+      - /usr/src/app/node_modules
+      - ./:/usr/src/app
+    depends_on:
+      - mongo
+    environment:
+      NODE_ENV: test
+    ports:
+      - 3000:3000
+    command: npm run test:unit
+
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_DATABASE: books_test
+    expose:
+      - 27017
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb-test:/data/db
+      - ./src/seeds/test.js:/docker-entrypoint-initdb.d/test.js:ro
+
+volumes:
+  mongodb-test:
