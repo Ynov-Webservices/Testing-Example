@@ -1,12 +1,11 @@
 const chai = require('chai');
-const chaiHttp = require('chai-http');
 const mongoose = require('mongoose');
-const request = require('request-promise');
 const expect = chai.expect;
 
 const app = require('../server');
 
 const filmListMock = require('./mocks/film_list.json');
+const coverMock = require('./mocks/cover.json');
 
 before(() => {
   mongoose.connect('mongodb://mongo:27017/books_test', {useNewUrlParser: true, useUnifiedTopology: true});
@@ -52,6 +51,34 @@ describe('GET /book/:id', () => {
       .end((_, res) => {
         expect(res).to.have.status(400);
         expect(res.body).to.have.property('code', 1);
+        done();
+      });
+  });
+});
+
+describe('GET /covers/:id', () => {
+  it('should return a cover', done => {
+    const bookId = filmListMock[0]._id;
+
+    chai
+      .request(app)
+      .get(`/covers/${bookId}`)
+      .end((_, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.deep.equal(coverMock);
+        done();
+      });
+  });
+
+  it('should throw an code 2 error', done => {
+    const bookId = 'notabook';
+
+    chai
+      .request(app)
+      .get(`/covers/${bookId}`)
+      .end((_, res) => {
+        expect(res).to.have.status(400);
+        expect(res.body).to.have.property('code', 2);
         done();
       });
   });
