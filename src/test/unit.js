@@ -1,6 +1,5 @@
 const sinon = require('sinon');
 const chai = require('chai');
-const mongoose = require('mongoose');
 const request = require('request-promise');
 const expect = chai.expect;
 
@@ -8,14 +7,6 @@ const booksRepo = require('../repositories/books');
 const coversRepo = require('../repositories/covers');
 
 const filmListMock = require('./mocks/film_list.json');
-
-before(() => {
-  mongoose.connect('mongodb://mongo:27017/books_test', {useNewUrlParser: true, useUnifiedTopology: true});
-});
-
-after(() => {
-  mongoose.connection.close();
-});
 
 describe('Books list', () => {
   it('should return two books with lean option', async () => {

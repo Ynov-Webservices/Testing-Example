@@ -1,19 +1,10 @@
 const chai = require('chai');
-const mongoose = require('mongoose');
 const expect = chai.expect;
 
 const app = require('../server');
 
 const filmListMock = require('./mocks/film_list.json');
 const coverMock = require('./mocks/cover.json');
-
-before(() => {
-  mongoose.connect('mongodb://mongo:27017/books_test', {useNewUrlParser: true, useUnifiedTopology: true});
-});
-
-after(() => {
-  mongoose.connection.close();
-});
 
 describe('GET /books', () => {
   it('should return a list of books', done => {
